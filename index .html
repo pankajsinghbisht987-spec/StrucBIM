@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StructBIM · Structural Engineering Knowledge Hub by Pankaj Singh Bisht</title>
+<meta name="description" content="Comprehensive RCC & Steel BIM knowledge dashboard by Pankaj Singh Bisht — Revit, Tekla, rebar detailing, structural modeling.">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0d14;
+  --bg2: #0f1420;
+  --surface: #141c2e;
+  --surface2: #1a2438;
+  --surface3: #1f2b40;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+  --amber: #f0a500;
+  --amber2: #ffbe3c;
+  --steel: #4a9eff;
+  --steel2: #7bb8ff;
+  --green: #2ecc71;
+  --red: #e74c3c;
+  --text: #e8eef8;
+  --muted: #6b7a99;
+  --muted2: #8a9bb8;
+  --sans: 'Exo 2', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(10,13,20,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex; align-items: center; gap: 0;
+  height: 60px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 20px; font-weight: 800; color: var(--text);
+  letter-spacing: -0.5px; margin-right: 40px; text-decoration: none;
+}
+.nav-logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--amber), #e08000);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: #000; font-weight: 900;
+}
+.nav-links { display: flex; align-items: center; gap: 2px; flex: 1; }
+.nav-link {
+  padding: 8px 16px; border-radius: 6px;
+  font-size: 13px; font-weight: 600; color: var(--muted2);
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+  letter-spacing: 0.3px;
+}
+.nav-link:hover { background: var(--surface); color: var(--text); }
+.nav-link.active { color: var(--amber); }
+.nav-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+.nav-badge {
+  font-family: var(--mono); font-size: 10px;
+  background: rgba(240,165,0,0.15); border: 1px solid rgba(240,165,0,0.3);
+  color: var(--amber); padding: 4px 10px; border-radius: 4px;
+  letter-spacing: 1px;
+}
+.nav-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--amber), var(--steel));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: #000; cursor: pointer;
+  flex-shrink: 0;
+}
+.burger { display: none; background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh; padding: 120px 40px 80px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 800px 600px at 70% 50%, rgba(74,158,255,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 600px 400px at 20% 30%, rgba(240,165,0,0.05) 0%, transparent 50%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+}
+.hero-content {
+  max-width: 1200px; width: 100%;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+  position: relative; z-index: 1;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(240,165,0,0.1); border: 1px solid rgba(240,165,0,0.25);
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; color: var(--amber);
+  letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.hero-tag::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.hero-h1 {
+  font-size: clamp(36px, 5vw, 68px);
+  font-weight: 900; line-height: 1.0;
+  letter-spacing: -2px; color: var(--text);
+  margin-bottom: 20px;
+}
+.hero-h1 .accent { color: var(--amber); }
+.hero-h1 .line2 { color: var(--steel2); }
+.hero-desc {
+  font-size: 16px; color: var(--muted2); line-height: 1.8;
+  font-weight: 400; margin-bottom: 36px; max-width: 500px;
+}
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-primary {
+  padding: 14px 28px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--amber), #e08000);
+  color: #000; font-weight: 800; font-size: 14px;
+  cursor: pointer; border: none; letter-spacing: 0.5px;
+  transition: all 0.2s; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(240,165,0,0.4); }
+.btn-outline {
+  padding: 14px 28px; border-radius: 8px;
+  border: 1px solid var(--border2); background: transparent;
+  color: var(--text); font-weight: 600; font-size: 14px;
+  cursor: pointer; transition: all 0.2s; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-outline:hover { background: var(--surface); border-color: var(--steel); color: var(--steel2); }
+.hero-stats { display: flex; gap: 32px; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); }
+.hstat { }
+.hstat-num { font-size: 28px; font-weight: 800; color: var(--amber); font-family: var(--mono); line-height: 1; }
+.hstat-lbl { font-size: 11px; color: var(--muted); margin-top: 3px; letter-spacing: 0.5px; font-weight: 600; }
+
+/* ── HERO 3D VISUAL ── */
+.hero-visual { position: relative; display: flex; align-items: center; justify-content: center; }
+.hero-visual-inner {
+  width: 100%; max-width: 520px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+}
+.visual-header {
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+  padding: 12px 16px; display: flex; align-items: center; gap: 8px;
+}
+.dot-red { width: 10px; height: 10px; border-radius: 50%; background: #e74c3c; }
+.dot-yel { width: 10px; height: 10px; border-radius: 50%; background: #f0a500; }
+.dot-grn { width: 10px; height: 10px; border-radius: 50%; background: #2ecc71; }
+.visual-title { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-left: 8px; letter-spacing: 1px; }
+
+/* ── SECTION ── */
+.section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
+.section-full { padding: 80px 0; }
+.section-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+.sec-eyebrow {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 3px;
+  color: var(--amber); text-transform: uppercase; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 12px;
+}
+.sec-eyebrow::before { content:''; width: 30px; height: 1px; background: var(--amber); }
+.sec-h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -1px; line-height: 1.1; margin-bottom: 16px; }
+.sec-h2 span { color: var(--amber); }
+.sec-desc { font-size: 16px; color: var(--muted2); line-height: 1.8; max-width: 600px; margin-bottom: 48px; }
+
+/* ── KNOWLEDGE CARDS ── */
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+.kcard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+  transition: all 0.3s; cursor: pointer;
+  position: relative;
+}
+.kcard::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--amber), var(--steel));
+  transform: scaleX(0); transition: transform 0.3s; transform-origin: left;
+}
+.kcard:hover { transform: translateY(-4px); border-color: var(--border2); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+.kcard:hover::before { transform: scaleX(1); }
+.kcard-visual { height: 200px; background: var(--bg2); overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 10px; }
+.kcard-body { padding: 24px; }
+.kcard-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; padding: 3px 10px; border-radius: 3px;
+  display: inline-block; margin-bottom: 12px; font-weight: 600;
+}
+.tag-rcc { background: rgba(240,165,0,0.12); color: var(--amber); border: 1px solid rgba(240,165,0,0.25); }
+.tag-steel { background: rgba(74,158,255,0.12); color: var(--steel2); border: 1px solid rgba(74,158,255,0.25); }
+.tag-bim { background: rgba(46,204,113,0.12); color: var(--green); border: 1px solid rgba(46,204,113,0.25); }
+.tag-revit { background: rgba(231,76,60,0.12); color: #ff6b6b; border: 1px solid rgba(231,76,60,0.25); }
+.kcard-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 10px; letter-spacing: -0.3px; }
+.kcard-desc { font-size: 13px; color: var(--muted2); line-height: 1.75; margin-bottom: 16px; }
+.kcard-items { display: flex; flex-direction: column; gap: 6px; }
+.kcard-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12px; color: var(--muted2); font-family: var(--mono);
+}
+.kcard-item::before { content: '→'; color: var(--amber); flex-shrink: 0; }
+.kcard-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px; border-top: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+}
+.kcard-level { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+.kcard-arrow { color: var(--amber); font-size: 18px; transition: transform 0.2s; }
+.kcard:hover .kcard-arrow { transform: translateX(4px); }
+
+/* ── DETAIL SECTIONS (expandable) ── */
+.detail-overlay {
+  display: none; position: fixed; inset: 0; z-index: 2000;
+  background: rgba(5,8,15,0.95); backdrop-filter: blur(10px);
+  overflow-y: auto; padding: 40px;
+}
+.detail-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+.detail-box {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 16px; max-width: 900px; width: 100%;
+  overflow: hidden; animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+.detail-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px 28px; border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.detail-title { font-size: 20px; font-weight: 800; }
+.detail-close {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  color: var(--text); font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.detail-close:hover { background: rgba(231,76,60,0.2); border-color: var(--red); color: var(--red); }
+.detail-body { padding: 32px 28px; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.detail-visual { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.detail-content { }
+.detail-h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--amber); }
+.detail-text { font-size: 13px; color: var(--muted2); line-height: 1.85; margin-bottom: 16px; }
+.detail-list { display: flex; flex-direction: column; gap: 8px; }
+.detail-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 12px; color: var(--muted2); font-family: var(--mono);
+  list-style: none; line-height: 1.6;
+}
+.detail-list li::before { content: '◆'; color: var(--amber); font-size: 8px; margin-top: 4px; flex-shrink: 0; }
+.formula-box {
+  background: var(--bg); border: 1px solid rgba(74,158,255,0.2);
+  border-left: 3px solid var(--steel); border-radius: 6px;
+  padding: 12px 16px; margin: 12px 0;
+  font-family: var(--mono); font-size: 12px; color: var(--steel2);
+  line-height: 1.7;
+}
+.table-mini { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; margin-top: 12px; }
+.table-mini th { background: rgba(240,165,0,0.1); color: var(--amber); padding: 7px 10px; text-align: left; border: 1px solid var(--border); font-size: 10px; letter-spacing: 0.5px; }
+.table-mini td { padding: 6px 10px; border: 1px solid var(--border); color: var(--muted2); }
+.table-mini tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+/* ── DRAWING SHOWCASE ── */
+.drawings-strip {
+  background: var(--bg2); padding: 60px 0;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.drawings-scroll {
+  display: flex; gap: 20px;
+  padding: 0 40px;
+  overflow-x: auto;
+}
+.drawings-scroll::-webkit-scrollbar { height: 4px; }
+.drawings-scroll::-webkit-scrollbar-thumb { background: var(--surface3); }
+.dwg-card {
+  flex-shrink: 0; width: 340px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+  transition: all 0.3s;
+}
+.dwg-card:hover { border-color: var(--amber); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.dwg-header {
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;
+}
+.dwg-name { font-family: var(--mono); font-size: 10px; color: var(--steel2); letter-spacing: 1px; }
+.dwg-scale { font-family: var(--mono); font-size: 9px; color: var(--muted); }
+.dwg-body { padding: 16px; background: #0b1220; }
+
+/* ── TOOLS GRID ── */
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.tool-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 24px 20px;
+  transition: all 0.2s; text-align: center;
+}
+.tool-card:hover { border-color: var(--steel); background: var(--surface2); transform: translateY(-2px); }
+.tool-icon { font-size: 36px; margin-bottom: 12px; }
+.tool-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.tool-sub { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.5px; line-height: 1.6; }
+
+/* ── PROFILE / FOOTER ── */
+.profile-section {
+  background: linear-gradient(135deg, var(--surface2), var(--bg2));
+  border-top: 1px solid var(--border);
+  padding: 80px 40px;
+}
+.profile-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr auto; gap: 40px; align-items: center; }
+.profile-avatar {
+  width: 100px; height: 100px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--amber), var(--steel));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px; font-weight: 900; color: #000;
+  border: 3px solid rgba(255,255,255,0.1);
+  box-shadow: 0 0 40px rgba(240,165,0,0.2);
+}
+.profile-info { }
+.profile-name { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+.profile-title { font-size: 14px; color: var(--amber); font-weight: 600; margin-bottom: 10px; font-family: var(--mono); letter-spacing: 1px; }
+.profile-desc { font-size: 14px; color: var(--muted2); line-height: 1.7; max-width: 500px; }
+.profile-skills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.skill-tag {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 1px;
+  padding: 4px 12px; border-radius: 4px;
+  background: var(--surface3); border: 1px solid var(--border);
+  color: var(--muted2); font-weight: 600;
+}
+.profile-links { display: flex; flex-direction: column; gap: 10px; }
+.profile-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 20px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); text-decoration: none; font-size: 13px; font-weight: 600;
+  transition: all 0.2s; min-width: 160px; justify-content: center;
+}
+.profile-link:hover { border-color: var(--steel); color: var(--steel2); background: rgba(74,158,255,0.05); }
+.profile-link.primary { background: linear-gradient(135deg, var(--amber), #e08000); border-color: transparent; color: #000; }
+.profile-link.primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(240,165,0,0.3); color: #000; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg); border-top: 1px solid var(--border);
+  padding: 24px 40px; text-align: center;
+  font-family: var(--mono); font-size: 11px; color: var(--muted);
+}
+footer span { color: var(--amber); }
+
+/* ── MOBILE ── */
+@media(max-width: 768px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .burger { display: block; }
+  .hero { padding: 100px 20px 60px; }
+  .hero-content { grid-template-columns: 1fr; gap: 40px; }
+  .hero-visual { display: none; }
+  .section { padding: 60px 20px; }
+  .section-inner { padding: 0 20px; }
+  .profile-inner { grid-template-columns: 1fr; text-align: center; }
+  .profile-avatar { margin: 0 auto; }
+  .profile-links { flex-direction: row; justify-content: center; }
+  .drawings-scroll { padding: 0 20px; }
+  .detail-body { padding: 20px; }
+  .detail-grid { grid-template-columns: 1fr; }
+}
+
+/* ── ANIMATIONS ── */
+.fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.6s, transform 0.6s; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+.fade-in:nth-child(2) { transition-delay: 0.1s; }
+.fade-in:nth-child(3) { transition-delay: 0.2s; }
+.fade-in:nth-child(4) { transition-delay: 0.3s; }
+.fade-in:nth-child(5) { transition-delay: 0.4s; }
+.fade-in:nth-child(6) { transition-delay: 0.5s; }
+
+/* Section separator */
+.sep { height: 1px; background: linear-gradient(90deg, transparent, var(--border2), transparent); margin: 0 40px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#hero">
+    <div class="nav-logo-icon">S</div>
+    StructBIM
+  </a>
+  <div class="nav-links">
+    <a class="nav-link active" href="#rcc">RCC Structure</a>
+    <a class="nav-link" href="#steel">Steel Structure</a>
+    <a class="nav-link" href="#bim">BIM Workflow</a>
+    <a class="nav-link" href="#drawings">Details</a>
+    <a class="nav-link" href="#tools">Tools</a>
+    <a class="nav-link" href="#about">About</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-badge">REVIT · TEKLA · IFC</div>
+    <div class="nav-avatar">P</div>
+  </div>
+  <button class="burger" onclick="toggleMobileNav()">☰</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-tag">Structural BIM Knowledge Hub</div>
+      <h1 class="hero-h1">
+        Master<br>
+        <span class="accent">RCC & Steel</span><br>
+        <span class="line2">BIM Modeling</span>
+      </h1>
+      <p class="hero-desc">A comprehensive learning resource for structural engineers — covering rebar detailing, Revit workflows, Tekla Structures, BIM standards, and real-world structural modeling techniques.</p>
+      <div class="hero-btns">
+        <a class="btn-primary" href="#rcc">Start Learning →</a>
+        <a class="btn-outline" href="#drawings">View Details ◫</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-num">6+</div><div class="hstat-lbl">Knowledge Modules</div></div>
+        <div class="hstat"><div class="hstat-num">8+</div><div class="hstat-lbl">Technical Drawings</div></div>
+        <div class="hstat"><div class="hstat-num">LOD 400</div><div class="hstat-lbl">BIM Standard</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-visual-inner">
+        <div class="visual-header">
+          <div class="dot-red"></div><div class="dot-yel"></div><div class="dot-grn"></div>
+          <span class="visual-title">COLUMN-REBAR-3D-ISO.rvt — REVIT 2024</span>
+        </div>
+        <!-- 3D Isometric Column Rebar SVG -->
+        <svg viewBox="0 0 500 380" style="background:#080e1a;display:block;width:100%">
+          <defs>
+            <linearGradient id="g-concrete" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#1a2d44"/>
+              <stop offset="100%" style="stop-color:#0f1a2a"/>
+            </linearGradient>
+            <linearGradient id="g-amber" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#f0a500"/>
+              <stop offset="100%" style="stop-color:#c07800"/>
+            </linearGradient>
+            <linearGradient id="g-steel" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#7bb8ff"/>
+              <stop offset="100%" style="stop-color:#3a7acc"/>
+            </linearGradient>
+          </defs>
+
+          <!-- ISOMETRIC COLUMN - concrete ghost -->
+          <!-- Bottom face -->
+          <polygon points="180,310 320,310 390,260 250,260" fill="url(#g-concrete)" stroke="rgba(74,158,255,0.3)" stroke-width="1"/>
+          <!-- Left face -->
+          <polygon points="180,130 180,310 250,260 250,80" fill="#0d1a2e" stroke="rgba(74,158,255,0.25)" stroke-width="1"/>
+          <!-- Right face -->
+          <polygon points="320,130 320,310 390,260 390,80" fill="#111f35" stroke="rgba(74,158,255,0.25)" stroke-width="1"/>
+          <!-- Top face -->
+          <polygon points="180,130 320,130 390,80 250,80" fill="#1a2d48" stroke="rgba(74,158,255,0.4)" stroke-width="1"/>
+
+          <!-- CORNER REBAR BARS - 4 × T25 (amber) -->
+          <!-- FL BL bar -->
+          <line x1="206" y1="280" x2="206" y2="108" stroke="#e07800" stroke-width="5" stroke-linecap="round"/>
+          <line x1="206" y1="108" x2="254" y2="86" stroke="#c06000" stroke-width="5" stroke-linecap="round"/>
+          <!-- FR BR bar -->
+          <line x1="294" y1="280" x2="294" y2="108" stroke="#e07800" stroke-width="5" stroke-linecap="round"/>
+          <line x1="294" y1="108" x2="347" y2="86" stroke="#c06000" stroke-width="5" stroke-linecap="round"/>
+          <!-- BL TL bar -->
+          <line x1="232" y1="270" x2="232" y2="98" stroke="#b06000" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="232" y1="98" x2="280" y2="76" stroke="#904000" stroke-width="4.5" stroke-linecap="round"/>
+          <!-- BR TR bar -->
+          <line x1="362" y1="240" x2="362" y2="98" stroke="#b06000" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="362" y1="98" x2="370" y2="95" stroke="#904000" stroke-width="4.5" stroke-linecap="round"/>
+
+          <!-- MID BARS - 4 × T20 (lighter) -->
+          <line x1="206" y1="280" x2="206" y2="108" stroke="#f0a500" stroke-width="3.5" stroke-linecap="round" opacity="0.7"/>
+          <!-- Mid bar front face -->
+          <line x1="250" y1="280" x2="250" y2="108" stroke="#f0a500" stroke-width="3.5" opacity="0.6"/>
+          <line x1="250" y1="108" x2="320" y2="82" stroke="#d08000" stroke-width="3.5" opacity="0.6"/>
+          <line x1="375" y1="260" x2="375" y2="104" stroke="#d08000" stroke-width="3" opacity="0.5"/>
+
+          <!-- TIES / STIRRUPS - horizontal closed loops -->
+          <g stroke="#4a9eff" stroke-width="2" fill="none" opacity="0.9">
+            <!-- Tie 1 - bottom -->
+            <polygon points="206,272 294,272 362,248 250,248" stroke-linejoin="round"/>
+            <!-- Tie 2 -->
+            <polygon points="206,240 294,240 362,216 250,216" stroke-linejoin="round"/>
+            <!-- Tie 3 -->
+            <polygon points="206,208 294,208 362,184 250,184" stroke-linejoin="round"/>
+            <!-- Tie 4 -->
+            <polygon points="206,176 294,176 362,152 250,152" stroke-linejoin="round"/>
+            <!-- Tie 5 -->
+            <polygon points="206,144 294,144 362,120 250,120" stroke-linejoin="round"/>
+            <!-- Tie 6 - top -->
+            <polygon points="206,116 294,116 362,96 250,96" stroke-linejoin="round"/>
+          </g>
+
+          <!-- 135° HOOK callout on top tie -->
+          <circle cx="206" cy="116" r="5" fill="#4a9eff" opacity="0.8"/>
+          <line x1="206" y1="116" x2="165" y2="95" stroke="#4a9eff" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="108" y="93" fill="#4a9eff" font-family="'JetBrains Mono',monospace" font-size="10">135° SEISMIC</text>
+          <text x="115" y="104" fill="#4a9eff" font-family="'JetBrains Mono',monospace" font-size="10">HOOK TIE</text>
+
+          <!-- Labels -->
+          <text x="124" y="200" fill="#f0a500" font-family="'JetBrains Mono',monospace" font-size="10">8 × T25</text>
+          <text x="120" y="212" fill="#f0a500" font-family="'JetBrains Mono',monospace" font-size="10">LONG BARS</text>
+          <line x1="170" y1="208" x2="206" y2="208" stroke="#f0a500" stroke-width="0.8" stroke-dasharray="3,2"/>
+
+          <text x="380" y="235" fill="#4a9eff" font-family="'JetBrains Mono',monospace" font-size="10">T10 TIES</text>
+          <text x="382" y="247" fill="#4a9eff" font-family="'JetBrains Mono',monospace" font-size="10">@150mm</text>
+
+          <!-- Dimension line -->
+          <line x1="155" y1="130" x2="155" y2="310" stroke="#6b7a99" stroke-width="1"/>
+          <line x1="149" y1="130" x2="161" y2="130" stroke="#6b7a99" stroke-width="1"/>
+          <line x1="149" y1="310" x2="161" y2="310" stroke="#6b7a99" stroke-width="1"/>
+          <text x="140" y="225" fill="#6b7a99" font-family="'JetBrains Mono',monospace" font-size="9" transform="rotate(-90,140,225)">H = 3000mm</text>
+
+          <!-- Title bar -->
+          <rect x="0" y="340" width="500" height="40" fill="rgba(20,30,50,0.8)"/>
+          <text x="14" y="357" fill="#6b7a99" font-family="'JetBrains Mono',monospace" font-size="10">COL-C1 · 500×500 · M30 · Fe500D</text>
+          <text x="14" y="372" fill="#4a9eff" font-family="'JetBrains Mono',monospace" font-size="10">LOD 400 · IFC4 EXPORT READY</text>
+          <text x="430" y="365" fill="#f0a500" font-family="'JetBrains Mono',monospace" font-size="10">3D ISO</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RCC KNOWLEDGE -->
+<section class="section" id="rcc">
+  <div class="sec-eyebrow">Module 01</div>
+  <h2 class="sec-h2">RCC <span>Reinforced Concrete</span> Fundamentals</h2>
+  <p class="sec-desc">Understanding the principles behind reinforced concrete members — from material behaviour to structural member design and detailing requirements.</p>
+  <div class="cards-grid">
+
+    <div class="kcard fade-in" onclick="openDetail('rcc-rebar')">
+      <div class="kcard-visual">
+        <!-- Rebar cross section SVG -->
+        <svg viewBox="0 0 320 160" style="width:100%;background:#080e1a;border-radius:6px">
+          <!-- Beam cross section with realistic bars -->
+          <rect x="50" y="15" width="220" height="130" fill="#0f1a2a" stroke="rgba(74,158,255,0.4)" stroke-width="2" rx="3"/>
+          <!-- cover dashed -->
+          <rect x="68" y="33" width="184" height="94" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4,3"/>
+          <!-- Stirrups -->
+          <rect x="72" y="37" width="176" height="86" fill="none" stroke="#4a9eff" stroke-width="3" rx="2"/>
+          <!-- 135 hook -->
+          <path d="M72,52 Q68,44 76,42" stroke="#4a9eff" stroke-width="3" fill="none"/>
+          <line x1="72" y1="52" x2="72" y2="62" stroke="#4a9eff" stroke-width="3"/>
+          <!-- Bottom bars 4×T25 -->
+          <circle cx="108" cy="108" r="12" fill="#8b2000" stroke="#f0a500" stroke-width="2.5"/>
+          <circle cx="148" cy="108" r="12" fill="#8b2000" stroke="#f0a500" stroke-width="2.5"/>
+          <circle cx="188" cy="108" r="12" fill="#8b2000" stroke="#f0a500" stroke-width="2.5"/>
+          <circle cx="228" cy="108" r="12" fill="#8b2000" stroke="#f0a500" stroke-width="2.5"/>
+          <!-- Top bars 2×T16 -->
+          <circle cx="108" cy="50" r="9" fill="#0a2040" stroke="#4a9eff" stroke-width="2"/>
+          <circle cx="228" cy="50" r="9" fill="#0a2040" stroke="#4a9eff" stroke-width="2"/>
+          <!-- Dim lines -->
+          <line x1="50" y1="155" x2="270" y2="155" stroke="#6b7a99" stroke-width="0.8"/>
+          <text x="160" y="165" text-anchor="middle" fill="#6b7a99" font-size="8" font-family="'JetBrains Mono',monospace">300mm WIDTH</text>
+          <!-- Labels -->
+          <text x="108" y="112" text-anchor="middle" fill="#fff" font-size="7" font-family="'JetBrains Mono',monospace">T25</text>
+          <text x="148" y="112" text-anchor="middle" fill="#fff" font-size="7" font-family="'JetBrains Mono',monospace">T25</text>
+          <text x="188" y="112" text-anchor="middle" fill="#fff" font-size="7" font-family="'JetBrains Mono',monospace">T25</text>
+          <text x="228" y="112" text-anchor="middle" fill="#fff" font-size="7" font-family="'JetBrains Mono',monospace">T25</text>
+          <text x="108" y="54" text-anchor="middle" fill="#fff" font-size="7" font-family="'JetBrains Mono',monospace">T16</text>
+          <text x="228" y="54" text-anchor="middle" fill="#fff" font-size="7" font-family="'JetBrains Mono',monospace">T16</text>
+          <text x="20" y="75" fill="#4a9eff" font-size="8" font-family="'JetBrains Mono',monospace">STIRRUP</text>
+          <text x="20" y="85" fill="#4a9eff" font-size="8" font-family="'JetBrains Mono',monospace">T8@150</text>
+        </svg>
+      </div>
+      <div class="kcard-body">
+        <span class="kcard-tag tag-rcc">RCC · BEAM</span>
+        <div class="kcard-title">Beam Reinforcement</div>
+        <div class="kcard-desc">Longitudinal tension bars, compression bars, stirrups — placement, spacing, cover, and development length for RC beams.</div>
+        <div class="kcard-items">
+          <div class="kcard-item">Main bars in tension zone (bottom)</div>
+          <div class="kcard-item">Stirrups @ 150–300mm spacing</div>
+          <div class="kcard-item">25mm clear cover minimum</div>
+          <div class="kcard-item">Development Ld = 40–50×db</div>
+        </div>
+      </div>
+      <div class="kcard-footer"><span class="kcard-level">IS 456 · ACI 318</span><span class="kcard-arrow">→</span></div>
+    </div>
+
+    <div class="kcard fade-in" onclick="openDetail('rcc-column')">
+      <div class="kcard-visual">
+        <!-- 3D Column ISO SVG -->
+        <svg viewBox="0 0 320 160" style="width:100%;background:#080e1a;border-radius:6px">
+          <!-- Isometric column small -->
+          <polygon points="100,140 200,140 240,115 140,115" fill="#0f1a2a" stroke="rgba(74,158,255,0.3)" stroke-width="1"/>
+          <polygon points="100,50 100,140 140,115 140,25" fill="#0a1528" stroke="rgba(74,158,255,0.25)" stroke-width="1"/>
+          <polygon points="200,50 200,140 240,115 240,25" fill="#111e35" stroke="rgba(74,158,255,0.25)" stroke-width="1"/>
+          <polygon points="100,50 200,50 240,25 140,25" fill="#152038" stroke="rgba(74,158,255,0.4)" stroke-width="1"/>
+          <!-- Corner bars -->
+          <line x1="115" y1="128" x2="115" y2="42" stroke="#f0a500" stroke-width="4"/>
+          <line x1="185" y1="128" x2="185" y2="42" stroke="#f0a500" stroke-width="4"/>
+          <line x1="130" y1="122" x2="130" y2="36" stroke="#d08000" stroke-width="3.5"/>
+          <line x1="226" y1="106" x2="226" y2="36" stroke="#d08000" stroke-width="3.5"/>
+          <!-- Mid bars -->
+          <line x1="150" y1="127" x2="150" y2="40" stroke="#c07000" stroke-width="2.5" opacity="0.7"/>
+          <line x1="210" y1="127" x2="210" y2="40" stroke="#c07000" stroke-width="2.5" opacity="0.7"/>
+          <!-- Ties -->
+          <polygon points="115,125 185,125 226,108 130,108" fill="none" stroke="#4a9eff" stroke-width="2"/>
+          <polygon points="115,100 185,100 226,83 130,83" fill="none" stroke="#4a9eff" stroke-width="2"/>
+          <polygon points="115,75 185,75 226,58 130,58" fill="none" stroke="#4a9eff" stroke-width="2"/>
+          <polygon points="115,50 185,50 226,33 130,33" fill="none" stroke="#4a9eff" stroke-width="2"/>
+          <!-- Labels -->
+          <text x="42" y="90" fill="#f0a500" font-size="8" font-family="'JetBrains Mono',monospace">8-T25</text>
+          <text x="42" y="102" fill="#f0a500" font-size="8" font-family="'JetBrains Mono',monospace">LONG.</text>
+          <line x1="95" y1="95" x2="75" y2="95" stroke="#f0a500" stroke-width="0.8" stroke-dasharray="3,2"/>
+          <text x="248" y="92" fill="#4a9eff" font-size="8" font-family="'JetBrains Mono',monospace">T10</text>
+          <text x="248" y="103" fill="#4a9eff" font-size="8" font-family="'JetBrains Mono',monospace">@150</text>
+          <text x="100" y="158" text-anchor="middle" fill="#6b7a99" font-size="8" font-family="'JetBrains Mono',monospace">500×500 COLUMN · 3D ISO VIEW</text>
+        </svg>
+      </div>
+      <div class="kcard-body">
+        <span class="kcard-tag tag-rcc">RCC · COLUMN</span>
+        <div class="kcard-title">Column Reinforcement</div>
+        <div class="kcard-desc">Longitudinal bars, lateral ties, seismic hooks — column design, bar arrangement, and confinement detailing.</div>
+        <div class="kcard-items">
+          <div class="kcard-item">8–12 bars typical arrangement</div>
+          <div class="kcard-item">Ties with 135° seismic hooks</div>
+          <div class="kcard-item">Min. 1% – Max. 6% steel ratio</div>
+          <div class="kcard-item">40mm clear cover</div>
+        </div>
+      </div>
+      <div class="kcard-footer"><span class="kcard-level">IS 456 · IS 13920</span><span class="kcard-arrow">→</span></div>
+    </div>
+
+    <div class="kcard fade-in" onclick="openDetail('rcc-slab')">
+      <div class="kcard-visual">
+        <svg viewBox="0 0 320 160" style="width:100%;background:#080e1a;border-radius:6px">
+          <!-- 3D slab isometric -->
+          <!-- Top face -->
+          <polygon points="30,60 290,60 270,40 50,40" fill="#152038" stroke="rgba(74,158,255,0.35)" stroke-width="1.5"/>
+          <!-- Front face -->
+          <polygon points="30,60 290,60 290,100 30,100" fill="#0d1828" stroke="rgba(74,158,255,0.25)" stroke-width="1"/>
+          <!-- Right face -->
+          <polygon points="290,60 270,40 270,80 290,100" fill="#111d32" stroke="rgba(74,158,255,0.3)" stroke-width="1"/>
+          <!-- X bars on top face (orange) -->
+          <g stroke="#f0a500" stroke-width="2.5" opacity="0.9">
+            <line x1="50" y1="42" x2="270" y2="42"/>
+            <line x1="52" y1="47" x2="272" y2="47"/>
+            <line x1="54" y1="52" x2="274" y2="52"/>
+            <line x1="56" y1="57" x2="276" y2="57"/>
+          </g>
+          <!-- Y bars on top face (blue) -->
+          <g stroke="#4a9eff" stroke-width="2" opacity="0.8">
+            <line x1="85" y1="40" x2="85" y2="60"/>
+            <line x1="120" y1="40" x2="120" y2="60"/>
+            <line x1="155" y1="40" x2="155" y2="60"/>
+            <line x1="190" y1="40" x2="190" y2="60"/>
+            <line x1="225" y1="40" x2="225" y2="60"/>
+            <line x1="260" y1="40" x2="260" y2="60"/>
+          </g>
+          <!-- Bottom bars in front face -->
+          <line x1="30" y1="93" x2="290" y2="93" stroke="#f0a500" stroke-width="3" opacity="0.7"/>
+          <line x1="30" y1="87" x2="290" y2="87" stroke="#f0a500" stroke-width="3" opacity="0.5"/>
+          <!-- Legend -->
+          <line x1="30" y1="118" x2="60" y2="118" stroke="#f0a500" stroke-width="2.5"/>
+          <text x="66" y="121" fill="#f0a500" font-size="8" font-family="'JetBrains Mono',monospace">MAIN BARS (X-DIR)</text>
+          <line x1="30" y1="134" x2="60" y2="134" stroke="#4a9eff" stroke-width="2"/>
+          <text x="66" y="137" fill="#4a9eff" font-size="8" font-family="'JetBrains Mono',monospace">DIST. BARS (Y-DIR)</text>
+          <text x="290" y="118" text-anchor="end" fill="#6b7a99" font-size="8" font-family="'JetBrains Mono',monospace">150mm SLAB</text>
+          <text x="290" y="130" text-anchor="end" fill="#6b7a99" font-size="8" font-family="'JetBrains Mono',monospace">T12@200 B.W.</text>
+        </svg>
+      </div>
+      <div class="kcard-body">
+        <span class="kcard-tag tag-rcc">RCC · SLAB</span>
+        <div class="kcard-title">Slab Reinforcement</div>
+        <div class="kcard-desc">One-way and two-way slab reinforcement — main bars, distribution bars, top strips at supports, and edge conditions.</div>
+        <div class="kcard-items">
+          <div class="kcard-item">T12@200 main, T10@300 distribution</div>
+          <div class="kcard-item">Top bars at continuous supports</div>
+          <div class="kcard-item">20mm clear cover (internal)</div>
+          <div class="kcard-item">As,min = 0.12% bD (Fe500)</div>
+        </div>
+      </div>
+      <div class="kcard-footer"><span class="kcard-level">IS 456 · ACI 318</span><span class="kcard-arrow">→</span></div>
+    </div>
+
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- STEEL STRUCTURE -->
+<section class="section" id="steel">
+  <div class="sec-eyebrow">Module 02</div>
+  <h2 class="sec-h2">Steel <span>Structural</span> Systems & BIM</h2>
+  <p class="sec-desc">Structural steel framing, connection types, section properties, and how to model steel structures in Revit and Tekla with full fabrication data.</p>
+  <div class="cards-grid">
+
+    <div class="kcard fade-in" onclick="openDetail('steel-frame')">
+      <div class="kcard-visual">
+        <svg viewBox="0 0 320 160" style="width:100%;background:#080e1a;border-radius:6px">
+          <!-- 3D Steel Frame Isometric -->
+          <!-- Ground -->
+          <polygon points="40,140 280,140 300,125 60,125" fill="#0a1020" stroke="rgba(74,158,255,0.1)" stroke-width="1"/>
+          <!-- Left column ISO -->
+          <polygon points="60,125 70,118 70,30 60,37" fill="#152038" stroke="#4a9eff" stroke-width="1.5"/>
+          <polygon points="60,37 70,30 80,37 70,44" fill="#1a2a48" stroke="#4a9eff" stroke-width="1.5"/>
+          <polygon points="60,125 70,118 80,125 70,132" fill="#0f1a2e" stroke="#4a9eff" stroke-width="1"/>
+          <!-- Right column ISO -->
+          <polygon points="230,125 240,118 240,30 230,37" fill="#152038" stroke="#4a9eff" stroke-width="1.5"/>
+          <polygon points="230,37 240,30 250,37 240,44" fill="#1a2a48" stroke="#4a9eff" stroke-width="1.5"/>
+          <!-- Beam top -->
+          <polygon points="70,30 240,30 250,24 80,24" fill="#1f3050" stroke="#f0a500" stroke-width="2"/>
+          <polygon points="70,30 70,38 240,38 240,30" fill="#152038" stroke="#f0a500" stroke-width="1.5"/>
+          <polygon points="240,30 250,24 250,32 240,38" fill="#1a2840" stroke="#f0a500" stroke-width="1.5"/>
+          <!-- Bolted end plate connection -->
+          <rect x="65" y="26" width="14" height="20" fill="#1a3060" stroke="#4a9eff" stroke-width="1.5" rx="1"/>
+          <circle cx="69" cy="30" r="2" fill="#4a9eff"/><circle cx="75" cy="30" r="2" fill="#4a9eff"/>
+          <circle cx="69" cy="38" r="2" fill="#4a9eff"/><circle cx="75" cy="38" r="2" fill="#4a9eff"/>
+          <rect x="231" y="26" width="14" height="20" fill="#1a3060" stroke="#4a9eff" stroke-width="1.5" rx="1"/>
+          <circle cx="235" cy="30" r="2" fill="#4a9eff"/><circle cx="241" cy="30" r="2" fill="#4a9eff"/>
+          <circle cx="235" cy="38" r="2" fill="#4a9eff"/><circle cx="241" cy="38" r="2" fill="#4a9eff"/>
+          <!-- Second bay -->
+          <polygon points="180,125 190,118 190,30 180,37" fill="#152038" stroke="#4a9eff" stroke-width="1"/>
+          <polygon points="190,30 220,30 222,24 192,24" fill="#1f3050" stroke="#f0a500" stroke-width="1.5"/>
+          <!-- Labels -->
+          <text x="155" y="21" text-anchor="middle" fill="#f0a500" font-size="9" font-family="'JetBrains Mono',monospace">I-SECTION BEAM</text>
+          <text x="20" y="80" fill="#4a9eff" font-size="9" font-family="'JetBrains Mono',monospace">SHS</text>
+          <text x="20" y="91" fill="#4a9eff" font-size="9" font-family="'JetBrains Mono',monospace">COL.</text>
+          <text x="120" y="155" text-anchor="middle" fill="#6b7a99" font-size="8" font-family="'JetBrains Mono',monospace">BOLTED MOMENT FRAME · 3D ISO</text>
+        </svg>
+      </div>
+      <div class="kcard-body">
+        <span class="kcard-tag tag-steel">STEEL · FRAME</span>
+        <div class="kcard-title">Steel Frame Systems</div>
+        <div class="kcard-desc">Moment frames, braced frames, column & beam sections — understanding steel framing behaviour and connection types for BIM modeling.</div>
+        <div class="kcard-items">
+          <div class="kcard-item">I-sections, SHS, RHS, CHS columns</div>
+          <div class="kcard-item">Moment & shear connections</div>
+          <div class="kcard-item">Bolted end plate / welded</div>
+          <div class="kcard-item">Base plates & anchor bolts</div>
+        </div>
+      </div>
+      <div class="kcard-footer"><span class="kcard-level">IS 800 · AISC 360</span><span class="kcard-arrow">→</span></div>
+    </div>
+
+    <div class="kcard fade-in" onclick="openDetail('steel-connection')">
+      <div class="kcard-visual">
+        <svg viewBox="0 0 320 160" style="width:100%;background:#080e1a;border-radius:6px">
+          <!-- Bolted connection detail -->
+          <!-- Vertical plate (column flange) -->
+          <rect x="130" y="10" width="18" height="140" fill="#1a2a42" stroke="#4a9eff" stroke-width="2"/>
+          <!-- Horizontal beam web -->
+          <rect x="148" y="55" width="130" height="12" fill="#152038" stroke="#f0a500" stroke-width="1.5"/>
+          <!-- End plate -->
+          <rect x="146" y="40" width="14" height="80" fill="#1a3060" stroke="#4a9eff" stroke-width="2"/>
+          <!-- Bolts (plan) -->
+          <circle cx="153" cy="52" r="4" fill="#0a1020" stroke="#7bb8ff" stroke-width="1.5"/>
+          <circle cx="153" cy="64" r="4" fill="#0a1020" stroke="#7bb8ff" stroke-width="1.5"/>
+          <circle cx="153" cy="76" r="4" fill="#0a1020" stroke="#7bb8ff" stroke-width="1.5"/>
+          <circle cx="153" cy="88" r="4" fill="#0a1020" stroke="#7bb8ff" stroke-width="1.5"/>
+          <circle cx="153" cy="100" r="4" fill="#0a1020" stroke="#7bb8ff" stroke-width="1.5"/>
+          <circle cx="153" cy="112" r="4" fill="#0a1020" stroke="#7bb8ff" stroke-width="1.5"/>
+          <!-- Column flanges -->
+          <rect x="122" y="10" width="8" height="140" fill="#152038" stroke="#4a9eff" stroke-width="1.5"/>
+          <rect x="148" y="10" width="8" height="140" fill="#152038" stroke="#4a9eff" stroke-width="1.5"/>
+          <!-- Weld symbol -->
+          <path d="M148,55 L140,48" stroke="#f0a500" stroke-width="1.5"/>
+          <text x="106" y="48" fill="#f0a500" font-size="9" font-family="'JetBrains Mono',monospace">WELD</text>
+          <!-- Callouts -->
+          <text x="165" y="48" fill="#7bb8ff" font-size="8" font-family="'JetBrains Mono',monospace">M24 HFS BOLTS</text>
+          <text x="165" y="59" fill="#7bb8ff" font-size="8" font-family="'JetBrains Mono',monospace">6 NOS. · Gr 8.8</text>
+          <text x="165" y="95" fill="#f0a500" font-size="8" font-family="'JetBrains Mono',monospace">END PLATE</text>
+          <text x="165" y="107" fill="#f0a500" font-size="8" font-family="'JetBrains Mono',monospace">20mm THICK</text>
+          <line x1="160" y1="90" x2="163" y2="95" stroke="#f0a500" stroke-width="0.8" stroke-dasharray="3,2"/>
+          <text x="30" y="80" fill="#4a9eff" font-size="8" font-family="'JetBrains Mono',monospace">UC 203×203</text>
+          <text x="30" y="91" fill="#4a9eff" font-size="8" font-family="'JetBrains Mono',monospace">×60 COL.</text>
+          <text x="120" y="158" text-anchor="middle" fill="#6b7a99" font-size="8" font-family="'JetBrains Mono',monospace">BEAM-COLUMN BOLTED CONNECTION DETAIL</text>
+        </svg>
+      </div>
+      <div class="kcard-body">
+        <span class="kcard-tag tag-steel">STEEL · CONNECTION</span>
+        <div class="kcard-title">Steel Connections</div>
+        <div class="kcard-desc">End plates, cleats, bolted and welded connections — understanding joint behaviour, detailing requirements and how Tekla models them.</div>
+        <div class="kcard-items">
+          <div class="kcard-item">Bolted end plate connections</div>
+          <div class="kcard-item">Grade 8.8 / 10.9 HSFG bolts</div>
+          <div class="kcard-item">Fillet & butt welds</div>
+          <div class="kcard-item">Tekla auto-connection components</div>
+        </div>
+      </div>
+      <div class="kcard-footer"><span class="kcard-level">IS 800 · BS 5950</span><span class="kcard-arrow">→</span></div>
+    </div>
+
+    <div class="kcard fade-in" onclick="openDetail('steel-sections')">
+      <div class="kcard-visual">
+        <svg viewBox="0 0 320 160" style="width:100%;background:#080e1a;border-radius:6px">
+          <!-- Section library -->
+          <text x="20" y="18" fill="#6b7a99" font-family="'JetBrains Mono',monospace" font-size="9">SECTION LIBRARY</text>
+          <!-- I-section -->
+          <g transform="translate(30,25)" stroke="#4a9eff" stroke-width="2" fill="#0f1e35">
+            <rect x="0" y="0" width="50" height="7"/>
+            <rect x="20" y="7" width="10" height="60"/>
+            <rect x="0" y="67" width="50" height="7"/>
+            <text x="25" y="90" text-anchor="middle" fill="#f0a500" font-size="9" font-family="'JetBrains Mono',monospace">I / W</text>
+            <text x="25" y="100" text-anchor="middle" fill="#6b7a99" font-size="8" font-family="'JetBrains Mono',monospace">SECTION</text>
+          </g>
+          <!-- RHS -->
+          <g transform="translate(110,30)" stroke="#4a9eff" stroke-width="2" fill="none">
+            <rect x="0" y="0" width="55" height="70"/>
+            <rect x="5" y="5" width="45" height="60"/>
+            <text x="27" y="88" text-anchor="middle" fill="#f0a500" font-size="9" font-family="'JetBrains Mono',monospace">RHS / SHS</text>
+            <text x="27" y="98" text-anchor="middle" fill="#6b7a99" font-size="8" font-family="'JetBrains Mono',monospace">HOLLOW</text>
+          </g>
+          <!-- C-section -->
+          <g transform="translate(190,30)" stroke="#4a9eff" stroke-width="2" fill="#0f1e35">
+            <rect x="0" y="0" width="40" height="7"/>
+            <rect x="0" y="7" width="10" height="56"/>
+            <rect x="0" y="63" width="40" height="7"/>
+            <text x="27" y="88" text-anchor="middle" fill="#f0a500" font-size="9" font-family="'JetBrains Mono',monospace">C-CHANNEL</text>
+          </g>
+          <!-- Circular -->
+          <g transform="translate(258,30)" stroke="#4a9eff" stroke-width="2" fill="none">
+            <circle cx="30" cy="35" r="30"/>
+            <circle cx="30" cy="35" r="24"/>
+            <text x="30" y="88" text-anchor="middle" fill="#f0a500" font-size="9" font-family="'JetBrains Mono',monospace">CHS</text>
+          </g>
+          <line x1="20" y1="140" x2="300" y2="140" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+          <text x="160" y="155" text-anchor="middle" fill="#6b7a99" font-size="8" font-family="'JetBrains Mono',monospace">STRUCTURAL STEEL SECTION TYPES</text>
+        </svg>
+      </div>
+      <div class="kcard-body">
+        <span class="kcard-tag tag-steel">STEEL · SECTIONS</span>
+        <div class="kcard-title">Steel Section Properties</div>
+        <div class="kcard-desc">Understanding I-sections, hollow sections, channels — properties, selection, and how they are defined and scheduled in Revit and Tekla.</div>
+        <div class="kcard-items">
+          <div class="kcard-item">Universal Beams (UB), Columns (UC)</div>
+          <div class="kcard-item">Square / Rectangular hollow sections</div>
+          <div class="kcard-item">Section properties: Ix, Iy, Zx, ry</div>
+          <div class="kcard-item">Steel grade: S275, S355, Fe345</div>
+        </div>
+      </div>
+      <div class="kcard-footer"><span class="kcard-level">IS 808 · BS EN 10034</span><span class="kcard-arrow">→</span></div>
+    </div>
+
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- TECHNICAL DRAWINGS -->
+<section class="section-full" id="drawings">
+  <div class="section-inner" style="margin-bottom:32px">
+    <div class="sec-eyebrow">Module 03</div>
+    <h2 class="sec-h2">Technical <span>Detail Drawings</span></h2>
+    <p class="sec-desc">Real structural detailing — the type of drawings you produce at LOD 350–400 in Revit and Tekla Structures.</p>
+  </div>
+  <div class="drawings-strip">
+    <div class="drawings-scroll">
+
+      <!-- DWG 1: Beam Elevation -->
+      <div class="dwg-card">
+        <div class="dwg-header"><span class="dwg-name">BEAM-REINF-ELEVATION</span><span class="dwg-scale">1:20</span></div>
+        <div class="dwg-body">
+          <svg viewBox="0 0 310 200" style="width:100%">
+            <rect x="0" y="0" width="310" height="200" fill="#080e18"/>
+            <!-- Supports -->
+            <rect x="0" y="35" width="25" height="130" fill="#0f1a2e" stroke="#3a5a7a" stroke-width="1.5"/>
+            <rect x="285" y="35" width="25" height="130" fill="#0f1a2e" stroke="#3a5a7a" stroke-width="1.5"/>
+            <!-- Beam outline -->
+            <rect x="25" y="50" width="260" height="100" fill="#0c1525" stroke="#3a6a9a" stroke-width="1.5"/>
+            <!-- Stirrups -->
+            <g stroke="#4a9eff" stroke-width="1.8" fill="none">
+              <rect x="38" y="55" width="14" height="90" rx="1"/>
+              <rect x="66" y="55" width="14" height="90" rx="1"/>
+              <rect x="98" y="55" width="14" height="90" rx="1"/>
+              <rect x="138" y="55" width="14" height="90" rx="1"/>
+              <rect x="178" y="55" width="14" height="90" rx="1"/>
+              <rect x="214" y="55" width="14" height="90" rx="1"/>
+              <rect x="245" y="55" width="14" height="90" rx="1"/>
+              <rect x="268" y="55" width="14" height="90" rx="1"/>
+            </g>
+            <!-- Bottom main bars -->
+            <line x1="25" y1="133" x2="285" y2="133" stroke="#f0a500" stroke-width="3.5"/>
+            <line x1="25" y1="141" x2="285" y2="141" stroke="#f0a500" stroke-width="3.5"/>
+            <line x1="25" y1="149" x2="180" y2="149" stroke="#f0a500" stroke-width="3.5"/>
+            <!-- Hooks -->
+            <path d="M25,133 Q17,133 17,125" stroke="#f0a500" stroke-width="3.5" fill="none"/>
+            <path d="M285,133 Q293,133 293,125" stroke="#f0a500" stroke-width="3.5" fill="none"/>
+            <!-- Top bars at supports -->
+            <line x1="25" y1="62" x2="110" y2="62" stroke="#7bb8ff" stroke-width="2.5"/>
+            <line x1="25" y1="69" x2="110" y2="69" stroke="#7bb8ff" stroke-width="2.5"/>
+            <line x1="200" y1="62" x2="285" y2="62" stroke="#7bb8ff" stroke-width="2.5"/>
+            <line x1="200" y1="69" x2="285" y2="69" stroke="#7bb8ff" stroke-width="2.5"/>
+            <!-- Dim -->
+            <line x1="25" y1="22" x2="285" y2="22" stroke="#6b7a99" stroke-width="0.8"/>
+            <line x1="25" y1="17" x2="25" y2="27" stroke="#6b7a99" stroke-width="0.8"/>
+            <line x1="285" y1="17" x2="285" y2="27" stroke="#6b7a99" stroke-width="0.8"/>
+            <text x="155" y="18" text-anchor="middle" fill="#6b7a99" font-family="'JetBrains Mono',monospace" font-size="8">L = 6000mm</text>
+            <!-- Labels -->
+            <text x="100" y="130" text-anchor="middle" fill="#f0a500" font-family="'JetBrains Mono',monospace" font-size="8">3T25 (BOTTOM)</text>
+            <text x="62" y="50" text-anchor="middle" fill="#7bb8ff" font-family="'JetBrains Mono',monospace" font-size="8">2T16 TOP</text>
+            <text x="155" y="195" text-anchor="middle" fill="#6b7a99" font-family="'JetBrains Mono',monospace" font-size="8">BEAM B1 · 300×600 · M30 · Fe500</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- DWG 2: 3D Column cage -->
+      <div class="dwg-card">
+        <div class="dwg-header"><span class="dwg-name">COLUMN-3D-REBAR-CAGE</span><span class="dwg-scale">ISO VIEW</span></div>
+        <div class="dwg-body">
+          <svg viewBox="0 0 310 200" style="width:100%">
+            <rect x="0" y="0" width="310" height="200" fill="#080e18"/>
+            <!-- 3D rebar cage no concrete ghost -->
+            <!-- Corner bars -->
+            <line x1="85" y1="175" x2="85" y2="15" stroke="#f0a500" stroke-width="4" stroke-linecap="round"/>
+            <line x1="155" y1="175" x2="155" y2="15" stroke="#f0a500" stroke-width="4" stroke-linecap="round"/>
+            <line x1="110" y1="165" x2="110" y2="5" stroke="#d08000" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="210" y1="155" x2="210" y2="5" stroke="#d08000" stroke-width="3.5" stroke-linecap="round"/>
+            <!-- Perspective mid bars -->
+            <line x1="118" y1="170" x2="118" y2="10" stroke="#c07000" stroke-width="2.5" opacity="0.7"/>
+            <line x1="180" y1="165" x2="180" y2="8" stroke="#c07000" stroke-width="2.5" opacity="0.6"/>
+            <!-- Ties -->
+            <g stroke="#4a9eff" stroke-width="2.2" fill="none">
+              <polygon points="85,168 155,168 210,150 110,150"/>
+              <polygon points="85,142 155,142 210,124 110,124"/>
+              <polygon points="85,116 155,116 210,98 110,98"/>
+              <polygon points="85,90 155,90 210,72 110,72"/>
+              <polygon points="85,64 155,64 210,46 110,46"/>
+              <polygon points="85,38 155,38 210,20 110,20"/>
+            </g>
+            <!-- Hook on top tie -->
+            <path d="M85,38 Q80,33 80,26" stroke="#4a9eff" stroke-width="2.2" fill="none"/>
+            <line x1="80" y1="26" x2="80" y2="18" stroke="#4a9eff" stroke-width="2.2"/>
+            <!-- Labels -->
+            <text x="30" y="112" fill="#f0a500" font-family="'JetBrains Mono',monospace" font-size="9">8 × T25</text>
+            <line x1="68" y1="108" x2="88" y2="108" stroke="#f0a500" stroke-width="0.8" stroke-dasharray="3,2"/>
+            <text x="222" y="100" fill="#4a9eff" font-family="'JetBrains Mono',monospace" font-size="9">T10@150</text>
+            <text x="222" y="110" fill="#4a9eff" font-family="'JetBrains Mono',monospace" font-size="9">TIES</text>
+            <text x="155" y="195" text-anchor="middle" fill="#6b7a99" font-family="'JetBrains Mono',monospace" font-size="8">COL C1 · 500×500 · REBAR CAGE · ISO</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- DWG 3: Footing Detail -->
+      <div class="dwg-card">
+        <div class="dwg-header"><span class="dwg-name">PAD-FOOTING-SECTION</span><span class="dwg-scale">1:20</span></div>
+        <div class="dwg-body">
+          <svg viewBox="0 0 310 200" style="width:100%">
+            <rect x="0" y="0" width="310" height="200" fill="#080e18"/>
+            <!-- Soil hatch -->
+            <g stroke="#1a2a1a" stroke-width="1" opacity="0.6">
+              <line x1="0" y1="175" x2="310" y2="175"/><line x1="0" y1="185" x2="310" y2="185"/>
+            </g>
+            <!-- PCC blinding -->
+            <rect x="20" y="158" width="270" height="14" fill="#0a1e0a" stroke="#2a4a2a" stroke-width="1"/>
+            <text x="155" y="168" text-anchor="middle" fill="#3a7a3a" font-family="'JetBrains Mono',monospace" font-size="7">75mm PCC BLINDING</text>
+            <!-- Footing outline -->
+            <rect x="20" y="80" width="270" height="78" fill="#0c1525" stroke="#3a6a9a" stroke-width="1.5"/>
+            <!-- Bottom bars X -->
+            <line x1="28" y1="148" x2="292" y2="148" stroke="#f0a500" stroke-width="3"/>
+            <line x1="28" y1="140" x2="292" y2="140" stroke="#f0a500" stroke-width="3"/>
+            <!-- Bottom bars Y -->
+            <line x1="28" y1="133" x2="292" y2="133" stroke="#7bb8ff" stroke-width="2.5" opacity="0.8"/>
+            <line x1="28" y1="125" x2="292" y2="125" stroke="#7bb8ff" stroke-width="2.5" opacity="0.8"/>
+            <!-- Column stub -->
+            <rect x="110" y="20" width="90" height="62" fill="#0f1a2e" stroke="#4a9eff" stroke-width="1.5"/>
+            <!-- Column starter bars -->
+            <line x1="128" y1="20" x2="128" y2="85" stroke="#f0a500" stroke-width="3"/>
+            <line x1="145" y1="20" x2="145" y2="85" stroke="#f0a500" stroke-width="3"/>
+            <line x1="162" y1="20" x2="162" y2="85" stroke="#f0a500" stroke-width="3"/>
+            <line x1="178" y1="20" x2="178" y2="85" stroke="#f0a500" stroke-width="3"/>
+            <!-- Column ties -->
+            <rect x="124" y="28" width="60" height="20" fill="none" stroke="#4a9eff" stroke-width="1.5" rx="1"/>
+            <rect x="124" y="52" width="60" height="20" fill="none" stroke="#4a9eff" stroke-width="1.5" rx="1"/>
+            <!-- Dim -->
+            <line x1="20" y1="8" x2="290" y2="8" stroke="#6b7a99" stroke-width="0.8"/>
+            <text x="155" y="5" text-anchor="middle" fill="#6b7a99" font-family="'JetBrains Mono',monospace" font-size="8">2000×2000 FOOTING</text>
+            <!-- Cover arrow -->
+            <line x1="20" y1="148" x2="10" y2="148" stroke="#2ecc71" stroke-width="1"/>
+            <text x="8" y="143" text-anchor="end" fill="#2ecc71" font-family="'JetBrains Mono',monospace" font-size="7">75mm</text>
+            <text x="155" y="195" text-anchor="middle" fill="#6b7a99" font-family="'JetBrains Mono',monospace" font-size="8">FOOTING F1 · T16@150 B.W. · M25</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- DWG 4: Steel connection detail -->
+      <div class="dwg-card">
+        <div class="dwg-header"><span class="dwg-name">STEEL-MOMENT-CONNECTION</span><span class="dwg-scale">1:5</span></div>
+        <div class="dwg-body">
+          <svg viewBox="0 0 310 200" style="width:100%">
+            <rect x="0" y="0" width="310" height="200" fill="#080e18"/>
+            <!-- Column web + flanges -->
+            <rect x="118" y="10" width="14" height="180" fill="#10202e" stroke="#4a9eff" stroke-width="2"/>
+            <rect x="108" y="10" width="10" height="180" fill="#0d1828" stroke="#4a9eff" stroke-width="1.5"/>
+            <rect x="132" y="10" width="10" height="180" fill="#0d1828" stroke="#4a9eff" stroke-width="1.5"/>
+            <!-- Beam flanges + web -->
+            <rect x="142" y="65" width="120" height="10" fill="#0f1e2e" stroke="#f0a500" stroke-width="2"/>
+            <rect x="142" y="75" width="10" height="40" fill="#0c1828" stroke="#f0a500" stroke-width="1.5"/>
+            <rect x="142" y="115" width="120" height="10" fill="#0f1e2e" stroke="#f0a500" stroke-width="2"/>
+            <!-- End plate -->
+            <rect x="136" y="58" width="10" height="78" fill="#152038" stroke="#7bb8ff" stroke-width="2.5"/>
+            <!-- Bolts -->
+            <g fill="none" stroke="#7bb8ff" stroke-width="1.5">
+              <circle cx="141" cy="70" r="4"/><circle cx="141" cy="82" r="4"/>
+              <circle cx="141" cy="94" r="4"/><circle cx="141" cy="106" r="4"/>
+              <circle cx="141" cy="118" r="4"/><circle cx="141" cy="130" r="4"/>
+            </g>
+            <!-- Stiffeners -->
+            <rect x="118" y="62" width="14" height="8" fill="#1a3a50" stroke="#4a9eff" stroke-width="1"/>
+            <rect x="118" y="118" width="14" height="8" fill="#1a3a50" stroke="#4a9eff" stroke-width="1"/>
+            <!-- Weld marks -->
+            <path d="M136,65 L130,60" stroke="#f0a500" stroke-width="1.5"/>
+            <path d="M136,128 L130,133" stroke="#f0a500" stroke-width="1.5"/>
+            <!-- Labels -->
+            <text x="270" y="82" fill="#7bb8ff" font-family="'JetBrains Mono',monospace" font-size="8">M24</text>
+            <text x="270" y="92" fill="#7bb8ff" font-family="'JetBrains Mono',monospace" font-size="8">BOLTS</text>
+            <text x="270" y="102" fill="#7bb8ff" font-family="'JetBrains Mono',monospace" font-size="8">Gr.8.8</text>
+            <text x="55" y="78" fill="#f0a500" font-family="'JetBrains Mono',monospace" font-size="8">UB 533</text>
+            <text x="55" y="88" fill="#f0a500" font-family="'JetBrains Mono',monospace" font-size="8">×210×92</text>
+            <text x="55" y="115" fill="#4a9eff" font-family="'JetBrains Mono',monospace" font-size="8">UC 254</text>
+            <text x="55" y="125" fill="#4a9eff" font-family="'JetBrains Mono',monospace" font-size="8">×254×89</text>
+            <text x="155" y="195" text-anchor="middle" fill="#6b7a99" font-family="'JetBrains Mono',monospace" font-size="8">BOLTED MOMENT CONN. · IS 800</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- DWG 5: Seismic joint -->
+      <div class="dwg-card">
+        <div class="dwg-header"><span class="dwg-name">SEISMIC-BCJ-DETAIL</span><span class="dwg-scale">1:10</span></div>
+        <div class="dwg-body">
+          <svg viewBox="0 0 310 200" style="width:100%">
+            <rect x="0" y="0" width="310" height="200" fill="#080e18"/>
+            <!-- Column -->
+            <rect x="110" y="0" width="90" height="200" fill="#0c1525" stroke="#3a6a9a" stroke-width="1.5"/>
+            <!-- Beam left -->
+            <rect x="0" y="65" width="115" height="70" fill="#0c1525" stroke="#3a6a9a" stroke-width="1.5"/>
+            <!-- Beam right -->
+            <rect x="195" y="65" width="115" height="70" fill="#0c1525" stroke="#3a6a9a" stroke-width="1.5"/>
+            <!-- Column bars -->
+            <g stroke="#f0a500" stroke-width="3"><line x1="128" y1="0" x2="128" y2="200"/><line x1="145" y1="0" x2="145" y2="200"/><line x1="162" y1="0" x2="162" y2="200"/><line x1="179" y1="0" x2="179" y2="200"/></g>
+            <!-- Beam bottom bars (hooked) -->
+            <line x1="0" y1="126" x2="174" y2="126" stroke="#7bb8ff" stroke-width="3"/>
+            <path d="M174,126 Q188,126 188,112" stroke="#7bb8ff" stroke-width="3" fill="none"/>
+            <line x1="310" y1="126" x2="139" y2="126" stroke="#7bb8ff" stroke-width="2.5" stroke-dasharray="6,3" opacity="0.5"/>
+            <!-- Beam top bars -->
+            <line x1="0" y1="74" x2="110" y2="74" stroke="#f0a500" stroke-width="2.5"/>
+            <line x1="200" y1="74" x2="310" y2="74" stroke="#f0a500" stroke-width="2.5"/>
+            <!-- Joint ties -->
+            <g stroke="#2ecc71" stroke-width="2" fill="none">
+              <rect x="120" y="68" width="70" height="64" rx="1"/>
+              <rect x="120" y="82" width="70" height="36" rx="1"/>
+            </g>
+            <!-- Stirrups beam -->
+            <g stroke="#4a9eff" stroke-width="1.5" fill="none">
+              <rect x="14" y="68" width="12" height="62" rx="1"/>
+              <rect x="34" y="68" width="12" height="62" rx="1"/>
+              <rect x="58" y="68" width="12" height="62" rx="1"/>
+              <rect x="82" y="68" width="12" height="62" rx="1"/>
+              <rect x="204" y="68" width="12" height="62" rx="1"/>
+              <rect x="228" y="68" width="12" height="62" rx="1"/>
+              <rect x="252" y="68" width="12" height="62" rx="1"/>
+              <rect x="278" y="68" width="12" height="62" rx="1"/>
+            </g>
+            <!-- Labels -->
+            <text x="155" y="56" text-anchor="middle" fill="#2ecc71" font-family="'JetBrains Mono',monospace" font-size="8">JOINT TIES</text>
+            <text x="248" y="62" fill="#e74c3c" font-family="'JetBrains Mono',monospace" font-size="7">NO SPLICE</text>
+            <text x="248" y="72" fill="#e74c3c" font-family="'JetBrains Mono',monospace" font-size="7">IN JOINT</text>
+            <text x="155" y="195" text-anchor="middle" fill="#6b7a99" font-family="'JetBrains Mono',monospace" font-size="8">SEISMIC BCJ DETAIL · IS 13920:2016</text>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- BIM WORKFLOW -->
+<section class="section" id="bim">
+  <div class="sec-eyebrow">Module 04</div>
+  <h2 class="sec-h2">BIM <span>Workflow</span> & Process</h2>
+  <p class="sec-desc">End-to-end BIM workflow for structural projects — from concept model to fabrication-ready deliverables at LOD 400.</p>
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:48px" class="fade-in">
+    <div style="padding:20px 16px;background:var(--surface);border-right:1px solid var(--border)">
+      <div style="font-size:32px;font-weight:900;color:rgba(240,165,0,0.2);font-family:var(--mono);line-height:1;margin-bottom:8px">01</div>
+      <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:6px;letter-spacing:0.5px">CONCEPT</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.6">Structural scheme, member layout, loads</div>
+    </div>
+    <div style="padding:20px 16px;background:var(--surface);border-right:1px solid var(--border)">
+      <div style="font-size:32px;font-weight:900;color:rgba(240,165,0,0.2);font-family:var(--mono);line-height:1;margin-bottom:8px">02</div>
+      <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:6px">ANALYSIS</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.6">ETABS / SAP2000 → forces, moments</div>
+    </div>
+    <div style="padding:20px 16px;background:var(--surface);border-right:1px solid var(--border)">
+      <div style="font-size:32px;font-weight:900;color:rgba(240,165,0,0.2);font-family:var(--mono);line-height:1;margin-bottom:8px">03</div>
+      <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:6px">3D MODEL</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.6">Revit / Tekla structural model LOD 300</div>
+    </div>
+    <div style="padding:20px 16px;background:var(--surface);border-right:1px solid var(--border)">
+      <div style="font-size:32px;font-weight:900;color:rgba(240,165,0,0.2);font-family:var(--mono);line-height:1;margin-bottom:8px">04</div>
+      <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:6px">REBAR</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.6">3D rebar placement, cover, hooks — LOD 350</div>
+    </div>
+    <div style="padding:20px 16px;background:var(--surface);border-right:1px solid var(--border)">
+      <div style="font-size:32px;font-weight:900;color:rgba(240,165,0,0.2);font-family:var(--mono);line-height:1;margin-bottom:8px">05</div>
+      <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:6px">CLASH</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.6">Navisworks clash detection, resolve MEP</div>
+    </div>
+    <div style="padding:20px 16px;background:var(--surface);border-right:1px solid var(--border)">
+      <div style="font-size:32px;font-weight:900;color:rgba(240,165,0,0.2);font-family:var(--mono);line-height:1;margin-bottom:8px">06</div>
+      <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:6px">DRAWINGS</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.6">Auto-generated details, BBS schedules</div>
+    </div>
+    <div style="padding:20px 16px;background:var(--surface)">
+      <div style="font-size:32px;font-weight:900;color:rgba(240,165,0,0.2);font-family:var(--mono);line-height:1;margin-bottom:8px">07</div>
+      <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:6px">FABRICATION</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.6">BVBS / IFC export → CNC bending machines</div>
+    </div>
+  </div>
+
+  <!-- LOD Cards -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;border-top:3px solid #6b7a99">
+      <div style="font-family:var(--mono);font-size:12px;color:#6b7a99;font-weight:700;margin-bottom:8px">LOD 200</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:8px">Generic</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7">Concept reinforcement. Estimated quantities only. No exact placement.</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;border-top:3px solid var(--green)">
+      <div style="font-family:var(--mono);font-size:12px;color:var(--green);font-weight:700;margin-bottom:8px">LOD 300</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:8px">Specific</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7">Bar sizes, spacing, cover defined. Accurate for coordination & quantity takeoff.</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;border-top:3px solid var(--steel)">
+      <div style="font-family:var(--mono);font-size:12px;color:var(--steel2);font-weight:700;margin-bottom:8px">LOD 350</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:8px">Full 3D</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7">Complete geometry with hooks, bends, laps. MEP coordination ready.</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid rgba(240,165,0,0.3);border-radius:10px;padding:20px;border-top:3px solid var(--amber);box-shadow:0 0 30px rgba(240,165,0,0.05)">
+      <div style="font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:700;margin-bottom:8px">LOD 400 ★</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:8px">Fabrication</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7">Bar marks, bending dims, shape codes, BBS. CNC/BVBS export ready.</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;border-top:3px solid #9b59b6">
+      <div style="font-family:var(--mono);font-size:12px;color:#bb8fce;font-weight:700;margin-bottom:8px">LOD 500</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:8px">As-Built</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7">Verified against site installation. Deviations documented and recorded.</div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- TOOLS -->
+<section class="section" id="tools">
+  <div class="sec-eyebrow">Module 05</div>
+  <h2 class="sec-h2">BIM <span>Tools</span> & Software</h2>
+  <p class="sec-desc">The professional software ecosystem for structural BIM — understanding when and why to use each tool.</p>
+  <div class="tools-grid">
+    <div class="tool-card fade-in"><div class="tool-icon">🏗️</div><div class="tool-name">Revit Structure</div><div class="tool-sub">Autodesk's BIM platform for structural concrete & steel modeling. Best for multi-discipline coordination. LOD 200–350.</div></div>
+    <div class="tool-card fade-in"><div class="tool-icon">⚙️</div><div class="tool-name">Tekla Structures</div><div class="tool-sub">Trimble's structural detailing powerhouse. Best for rebar cages, connections, BBS generation. LOD 350–400.</div></div>
+    <div class="tool-card fade-in"><div class="tool-icon">📐</div><div class="tool-name">ETABS / SAP2000</div><div class="tool-sub">Structural analysis software. Provides design forces, moments, reactions for rebar design. Links to Revit via API.</div></div>
+    <div class="tool-card fade-in"><div class="tool-icon">🔍</div><div class="tool-name">Navisworks</div><div class="tool-sub">Autodesk's clash detection and model coordination tool. Used to find hard and clearance clashes between rebar and MEP.</div></div>
+    <div class="tool-card fade-in"><div class="tool-icon">📊</div><div class="tool-name">AutoCAD</div><div class="tool-sub">2D drafting for structural drawings, reinforcement details. Still widely used for shop drawings and GA layouts.</div></div>
+    <div class="tool-card fade-in"><div class="tool-icon">🔗</div><div class="tool-name">IFC / Open BIM</div><div class="tool-sub">ISO 16739 open standard for model exchange. IfcReinforcingBar, IfcBeam, IfcColumn — vendor-neutral BIM sharing.</div></div>
+    <div class="tool-card fade-in"><div class="tool-icon">🏭</div><div class="tool-name">BVBS / CNC</div><div class="tool-sub">Digital rebar fabrication format exported from Tekla to CNC bending machines. LOD 400 key deliverable — zero manual re-entry.</div></div>
+    <div class="tool-card fade-in"><div class="tool-icon">☁️</div><div class="tool-name">BIM 360 / ACC</div><div class="tool-sub">Autodesk cloud platform for model coordination, issue tracking, document management on live projects.</div></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<div class="sep"></div>
+<section class="profile-section" id="about">
+  <div class="profile-inner">
+    <div class="profile-avatar">P</div>
+    <div class="profile-info">
+      <div class="profile-name">Pankaj Singh Bisht</div>
+      <div class="profile-title">STRUCTURAL BIM ENGINEER · REVIT · TEKLA · IFC</div>
+      <div class="profile-desc">This knowledge hub is created to help fellow engineers, students, and BIM professionals understand the fundamentals of RCC and steel structural BIM modeling — from basic rebar detailing to full LOD 400 fabrication-ready models in Revit and Tekla Structures.</div>
+      <div class="profile-skills">
+        <span class="skill-tag">Revit Structure</span>
+        <span class="skill-tag">Tekla Structures</span>
+        <span class="skill-tag">Rebar Detailing</span>
+        <span class="skill-tag">Steel BIM</span>
+        <span class="skill-tag">IFC Export</span>
+        <span class="skill-tag">Navisworks</span>
+        <span class="skill-tag">ETABS Link</span>
+        <span class="skill-tag">LOD 400</span>
+        <span class="skill-tag">IS 456</span>
+        <span class="skill-tag">IS 800</span>
+        <span class="skill-tag">ACI 318</span>
+        <span class="skill-tag">BBS Generation</span>
+      </div>
+    </div>
+    <div class="profile-links">
+      <a class="profile-link primary" href="https://www.linkedin.com/in/" target="_blank">🔗 Connect on LinkedIn</a>
+      <a class="profile-link" href="mailto:">✉️ Get in Touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>StructBIM</span> · Knowledge Dashboard by <span>Pankaj Singh Bisht</span> · Structural BIM Engineer · Built with passion for engineering education
+</footer>
+
+<!-- DETAIL OVERLAYS -->
+<div class="detail-overlay" id="overlay-rcc-rebar">
+  <div class="detail-box">
+    <div class="detail-head">
+      <div class="detail-title">🏗️ Beam Reinforcement — Complete Guide</div>
+      <button class="detail-close" onclick="closeDetail('rcc-rebar')">✕</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-grid">
+        <div class="detail-visual">
+          <svg viewBox="0 0 280 260" style="width:100%;background:#050a14;border-radius:6px">
+            <rect x="20" y="20" width="240" height="220" fill="#0c1525" stroke="#3a6a9a" stroke-width="1.5" rx="2"/>
+            <rect x="40" y="40" width="200" height="180" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1" stroke-dasharray="4,3"/>
+            <rect x="44" y="44" width="192" height="172" fill="none" stroke="#4a9eff" stroke-width="3" rx="2"/>
+            <path d="M44,62 Q40,52 50,48" stroke="#4a9eff" stroke-width="3" fill="none"/>
+            <line x1="44" y1="62" x2="44" y2="78" stroke="#4a9eff" stroke-width="3"/>
+            <circle cx="82" cy="195" r="14" fill="#7b1800" stroke="#f0a500" stroke-width="2.5"/>
+            <circle cx="130" cy="195" r="14" fill="#7b1800" stroke="#f0a500" stroke-width="2.5"/>
+            <circle cx="178" cy="195" r="14" fill="#7b1800" stroke="#f0a500" stroke-width="2.5"/>
+            <circle cx="222" cy="195" r="14" fill="#7b1800" stroke="#f0a500" stroke-width="2.5"/>
+            <circle cx="82" cy="57" r="10" fill="#061828" stroke="#4a9eff" stroke-width="2"/>
+            <circle cx="222" cy="57" r="10" fill="#061828" stroke="#4a9eff" stroke-width="2"/>
+            <text x="82" y="200" text-anchor="middle" fill="#fff" font-size="9" font-family="'JetBrains Mono',monospace">T25</text>
+            <text x="130" y="200" text-anchor="middle" fill="#fff" font-size="9" font-family="'JetBrains Mono',monospace">T25</text>
+            <text x="178" y="200" text-anchor="middle" fill="#fff" font-size="9" font-family="'JetBrains Mono',monospace">T25</text>
+            <text x="222" y="200" text-anchor="middle" fill="#fff" font-size="9" font-family="'JetBrains Mono',monospace">T25</text>
+            <text x="82" y="61" text-anchor="middle" fill="#fff" font-size="8" font-family="'JetBrains Mono',monospace">T16</text>
+            <text x="222" y="61" text-anchor="middle" fill="#fff" font-size="8" font-family="'JetBrains Mono',monospace">T16</text>
+            <!-- Dim lines -->
+            <line x1="20" y1="250" x2="260" y2="250" stroke="#6b7a99" stroke-width="0.8"/>
+            <text x="140" y="260" text-anchor="middle" fill="#6b7a99" font-size="9" font-family="'JetBrains Mono',monospace">b = 300mm</text>
+            <line x1="6" y1="20" x2="6" y2="240" stroke="#6b7a99" stroke-width="0.8"/>
+            <text x="4" y="135" text-anchor="middle" fill="#6b7a99" font-size="9" font-family="'JetBrains Mono',monospace" transform="rotate(-90,4,135)">D = 600mm</text>
+            <line x1="20" y1="44" x2="6" y2="44" stroke="#2ecc71" stroke-width="1"/>
+            <text x="3" y="40" text-anchor="end" fill="#2ecc71" font-size="8" font-family="'JetBrains Mono',monospace">25mm COVER</text>
+          </svg>
+        </div>
+        <div class="detail-content">
+          <div class="detail-h3">Beam Reinforcement Principles</div>
+          <div class="detail-text">A reinforced concrete beam carries loads primarily through bending. The bottom zone develops tension (carried by steel), while the top zone carries compression (concrete). Shear is resisted by diagonal compression + stirrups.</div>
+          <div class="formula-box">Tension zone: As = M / (0.87 fy × jd)<br>Shear: Vus = 0.87 fy × Asv × d / sv<br>Dev. length: Ld ≈ 40–50 × db (Fe500, M25)</div>
+          <div class="detail-h3" style="margin-top:16px">Key Detailing Rules</div>
+          <ul class="detail-list">
+            <li>Clear cover 25mm (internal), 40mm (external)</li>
+            <li>Min. 2 bars, max spacing 300mm or 0.75d</li>
+            <li>Stirrups @ d/2 for standard, d/4 in seismic zones</li>
+            <li>Stagger laps — max 50% at any section</li>
+            <li>Curtail bars where no longer required by BMD</li>
+            <li>Top bars at supports ≥ 0.25 × span length</li>
+          </ul>
+          <table class="table-mini" style="margin-top:16px">
+            <tr><th>Component</th><th>Typical Size</th></tr>
+            <tr><td>Main bars</td><td>T16 – T32</td></tr>
+            <tr><td>Stirrups</td><td>T8 – T12</td></tr>
+            <tr><td>Cover</td><td>25–40mm</td></tr>
+            <tr><td>Min. width</td><td>200mm</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="detail-overlay" id="overlay-rcc-column">
+  <div class="detail-box">
+    <div class="detail-head">
+      <div class="detail-title">🏛️ Column Reinforcement — Complete Guide</div>
+      <button class="detail-close" onclick="closeDetail('rcc-column')">✕</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-grid">
+        <div class="detail-visual">
+          <svg viewBox="0 0 280 280" style="width:100%;background:#050a14;border-radius:6px">
+            <rect x="40" y="30" width="200" height="220" fill="#0c1525" stroke="#3a6a9a" stroke-width="1.5" rx="2"/>
+            <rect x="60" y="50" width="160" height="180" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1" stroke-dasharray="4,3"/>
+            <rect x="64" y="54" width="152" height="172" fill="none" stroke="#4a9eff" stroke-width="3" rx="2"/>
+            <line x1="64" y1="140" x2="216" y2="140" stroke="#f0a500" stroke-width="1.5" stroke-dasharray="6,3"/>
+            <line x1="140" y1="54" x2="140" y2="226" stroke="#f0a500" stroke-width="1.5" stroke-dasharray="6,3"/>
+            <circle cx="80" cy="70" r="13" fill="#7b1800" stroke="#f0a500" stroke-width="2.5"/>
+            <circle cx="200" cy="70" r="13" fill="#7b1800" stroke="#f0a500" stroke-width="2.5"/>
+            <circle cx="80" cy="210" r="13" fill="#7b1800" stroke="#f0a500" stroke-width="2.5"/>
+            <circle cx="200" cy="210" r="13" fill="#7b1800" stroke="#f0a500" stroke-width="2.5"/>
+            <circle cx="140" cy="70" r="11" fill="#5b1200" stroke="#f0a500" stroke-width="2"/>
+            <circle cx="140" cy="210" r="11" fill="#5b1200" stroke="#f0a500" stroke-width="2"/>
+            <circle cx="80" cy="140" r="11" fill="#5b1200" stroke="#f0a500" stroke-width="2"/>
+            <circle cx="200" cy="140" r="11" fill="#5b1200" stroke="#f0a500" stroke-width="2"/>
+            <text x="80" y="74" text-anchor="middle" fill="#fff" font-size="8" font-family="'JetBrains Mono',monospace">T25</text>
+            <text x="200" y="74" text-anchor="middle" fill="#fff" font-size="8" font-family="'JetBrains Mono',monospace">T25</text>
+            <text x="140" y="144" text-anchor="middle" fill="#fff" font-size="8" font-family="'JetBrains Mono',monospace">T20</text>
+            <!-- 135 hook callout -->
+            <path d="M64,62 Q56,54 62,48" stroke="#4a9eff" stroke-width="2" fill="none"/>
+            <text x="2" y="50" fill="#4a9eff" font-size="8" font-family="'JetBrains Mono',monospace">135°</text>
+            <text x="2" y="60" fill="#4a9eff" font-size="8" font-family="'JetBrains Mono',monospace">HOOK</text>
+            <line x1="40" y1="268" x2="240" y2="268" stroke="#6b7a99" stroke-width="0.8"/>
+            <text x="140" y="278" text-anchor="middle" fill="#6b7a99" font-size="9" font-family="'JetBrains Mono',monospace">500 × 500mm</text>
+          </svg>
+        </div>
+        <div class="detail-content">
+          <div class="detail-h3">Column Reinforcement Principles</div>
+          <div class="detail-text">Columns are compression members carrying axial load + bending. Longitudinal bars carry combined axial + bending; lateral ties provide confinement, prevent bar buckling, and resist shear. Seismic design adds 135° closed ties.</div>
+          <div class="formula-box">As,min = 0.8% Ag (IS 456)<br>As,max = 6% Ag (IS 456)<br>Tie spacing: min(300mm, least dim., 16×db)<br>Seismic: min(100mm, b/4, 6×db)</div>
+          <div class="detail-h3" style="margin-top:16px">Key Detailing Rules</div>
+          <ul class="detail-list">
+            <li>Minimum 4 bars for rectangular, 6 for circular</li>
+            <li>40mm clear cover to outer tie</li>
+            <li>135° hooks on all tie ends (seismic zones)</li>
+            <li>No lap joints in joint zone or plastic hinge region</li>
+            <li>Lap offset: above floor level by min. 600mm</li>
+            <li>Cross-ties for bars spaced >150mm apart</li>
+          </ul>
+          <table class="table-mini" style="margin-top:16px">
+            <tr><th>Property</th><th>Value</th></tr>
+            <tr><td>Cover</td><td>40mm to tie</td></tr>
+            <tr><td>ρ min</td><td>0.8% Ag</td></tr>
+            <tr><td>ρ max</td><td>6% Ag</td></tr>
+            <tr><td>Tie dia.</td><td>≥ T8, or db/4</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="detail-overlay" id="overlay-rcc-slab">
+  <div class="detail-box">
+    <div class="detail-head">
+      <div class="detail-title">🟫 Slab Reinforcement — Complete Guide</div>
+      <button class="detail-close" onclick="closeDetail('rcc-slab')">✕</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-text">Two-way slabs distribute loads in both directions. The shorter span carries more load. Main bars run parallel to the shorter span at bottom; distribution bars run at right angles. Top bars are added over supports.</div>
+      <div class="formula-box">One-way: As,min = 0.12% bD (Fe500) — if Lx/Ly > 2<br>Two-way: design by BM coefficients (IS 456 Table 26)<br>Max bar spacing = min(3d, 300mm) for main bars</div>
+      <ul class="detail-list">
+        <li>Main bars: T10–T16 @ 150–200mm (short span, bottom)</li>
+        <li>Distribution bars: T8–T10 @ 200–300mm (long span)</li>
+        <li>Top bars at continuous edges: 0.3× span from support</li>
+        <li>Edge strips: provide nominal T8@200mm each way</li>
+        <li>20mm cover for internal mild exposure</li>
+        <li>Crank bars at 1/5 span from support face</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="detail-overlay" id="overlay-steel-frame">
+  <div class="detail-box">
+    <div class="detail-head">
+      <div class="detail-title">🔩 Steel Frame Systems — Complete Guide</div>
+      <button class="detail-close" onclick="closeDetail('steel-frame')">✕</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-text">Structural steel frames use hot-rolled or cold-formed sections in various configurations. Frame behaviour depends on connection type — pinned, semi-rigid, or rigid moment connections determine load path and sway resistance.</div>
+      <div class="formula-box">Moment frame: M = wL²/8 (fixed-fixed = wL²/12)<br>Section classification: d/t ratios (compact, non-compact)<br>Slenderness: λ = Le/ry → buckling check IS 800</div>
+      <ul class="detail-list">
+        <li>Universal Beams (UB): bending members — wide flange for stiffness</li>
+        <li>Universal Columns (UC): stocky, good about both axes</li>
+        <li>SHS/RHS: columns and braces — efficient closed sections</li>
+        <li>Braced frames resist lateral via diagonal braces (pinned joints)</li>
+        <li>Moment frames resist sway through rigid beam-column joints</li>
+        <li>Tekla models connections with parametric joint components</li>
+      </ul>
+      <table class="table-mini" style="margin-top:16px">
+        <tr><th>Section</th><th>Use</th><th>Key Property</th></tr>
+        <tr><td>UB 254–914</td><td>Beams</td><td>High Ix</td></tr>
+        <tr><td>UC 152–356</td><td>Columns</td><td>Balanced Ix/Iy</td></tr>
+        <tr><td>SHS 60–400</td><td>Col/Brace</td><td>Equal axes</td></tr>
+        <tr><td>CHS 48–610</td><td>Truss/arch</td><td>Max torsion</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="detail-overlay" id="overlay-steel-connection">
+  <div class="detail-box">
+    <div class="detail-head">
+      <div class="detail-title">⚙️ Steel Connections — Complete Guide</div>
+      <button class="detail-close" onclick="closeDetail('steel-connection')">✕</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-text">Steel connections transfer forces between members. The connection type determines structural behaviour — pinned connections (shear only), moment connections (full fixity). Connections are designed for shear, axial, and moment capacity.</div>
+      <div class="formula-box">Bolt shear: Vds = fu × Anb / (√3 × γmb)<br>Weld: Lw,min = 4 × weld size (throat)<br>End plate: tp ≥ M / (0.9 fy × bolt lever arm)</div>
+      <ul class="detail-list">
+        <li>Fin plate: simple shear connection — beam-to-column web</li>
+        <li>Flexible end plate: semi-rigid — limited moment capacity</li>
+        <li>Extended end plate: full moment connection — most common</li>
+        <li>HSFG bolts Gr.8.8 / 10.9 — high strength friction grip</li>
+        <li>Fillet weld: toe to heel, 6–12mm typical size</li>
+        <li>Stiffeners added when column web insufficient in bending</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="detail-overlay" id="overlay-steel-sections">
+  <div class="detail-box">
+    <div class="detail-head">
+      <div class="detail-title">📏 Steel Section Properties — Complete Guide</div>
+      <button class="detail-close" onclick="closeDetail('steel-sections')">✕</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-text">Steel section properties determine strength, stiffness, and buckling resistance. In Revit and Tekla, sections are selected from standard libraries (IS 808, BS EN 10034, AISC) and assigned to structural members with material grade.</div>
+      <div class="formula-box">Second moment: I = bd³/12 (approx for I-section)<br>Section modulus: Z = I / ymax<br>Radius of gyration: r = √(I / A)</div>
+      <table class="table-mini">
+        <tr><th>Grade</th><th>fy (MPa)</th><th>fu (MPa)</th><th>Standard</th></tr>
+        <tr><td>S275</td><td>275</td><td>430</td><td>BS EN 10025</td></tr>
+        <tr><td>S355</td><td>355</td><td>510</td><td>BS EN 10025</td></tr>
+        <tr><td>Fe345</td><td>345</td><td>490</td><td>IS 2062</td></tr>
+        <tr><td>A572 Gr50</td><td>345</td><td>450</td><td>ASTM</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DETAIL OVERLAY ──
+function openDetail(id) {
+  document.getElementById('overlay-'+id).classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeDetail(id) {
+  document.getElementById('overlay-'+id).classList.remove('open');
+  document.body.style.overflow='';
+}
+document.querySelectorAll('.detail-overlay').forEach(o => {
+  o.addEventListener('click', e => { if(e.target===o) { o.classList.remove('open'); document.body.style.overflow=''; } });
+});
+
+// ── NAV ACTIVE ──
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const a = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+      if(a) a.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+
+// ── FADE IN ──
+const fadeObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => fadeObs.observe(el));
+
+// ── MOBILE NAV ──
+function toggleMobileNav() { alert('Navigate to: RCC Structure, Steel Structure, BIM Workflow, Details, Tools, About'); }
+</script>
+</body>
+</html>
